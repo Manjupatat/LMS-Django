@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+{% block title %}Register - LMS{% endblock %}
+{% block content %}
+<h2>Register</h2>
+<!--
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Register</button>
+</form> -->
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3>Register</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password1" name="password1" required>
+                            <small class="form-text text-muted">
+                                - At least 8 characters long<br>
+                                - Cannot be entirely numeric<br>
+                                - Cannot be too common
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password2" name="password2" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                        <div class="text-center mt-3">
+                            <p>Already have an account? <a href="{% url 'login' %}" class="text-primary">Log in</a></p>
+                        </div>
+
+                       
+
+                    </form>
+                    <h3 class="row justify-content-center"> OR </h3>
+                        
+                    
+                        <button type="submit" class="btn btn-primary w-100" onclick="location.href='{% provider_login_url 'google' %}'">
+                            <i class="fa-brads fa-google googleicon"></i>
+                            Continue with Google</button> 
+                               
+                    
+<!-- <button type="submit" class="btn btn-primary w-100">
+                     <a href="{% provider_login_url 'google' %}" class="text-light">
+                        <i class="fa-brands fa-google googleicon"></i> Continue with Google
+                    </a></button> -->
+                    
+                        
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+{% endblock %}

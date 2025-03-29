@@ -1,0 +1,222 @@
+/* ======= GENERAL STYLES ======= */
+
+.dropdown-menu {
+    min-inline-size: 250px;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.dropdown-menu .dropdown-item {
+    font-size: 14px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* ======= HERO SECTION ======= */
+
+.hero {
+    background: url('/static/images/hero-bg.jpg') no-repeat center center/cover;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* ======= CARD HOVER EFFECT ======= */
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+/* ======= BUTTON HOVER EFFECT ======= */
+
+.btn-primary {
+    border-radius: 50px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+
+/* ======= ICON HOVER EFFECT ======= */
+
+.category-icon {
+    font-size: 2rem;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.category-icon:hover {
+    color: #007bff;
+    transform: rotate(10deg) scale(1.1);
+}
+
+
+/* ======= TESTIMONIAL MARQUEE SECTION ======= */
+
+.testimonial-marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
+    background: #f8f9fa;
+    padding: 20px 0;
+    position: relative;
+}
+
+.testimonial-marquee {
+    display: flex;
+    gap: 30px;
+    animation: marqueeScroll 20s linear infinite;
+}
+
+
+/* Marquee Animation */
+
+@keyframes marqueeScroll {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+
+/* Pause Animation on Hover */
+
+.testimonial-marquee:hover {
+    animation-play-state: paused;
+}
+
+
+/* ======= TESTIMONIAL CARD DESIGN ======= */
+
+.testimonial-card {
+    min-width: 300px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+
+/* Hover Effect for Testimonial Cards */
+
+.testimonial-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.category-title {
+    font-weight: bold;
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.course-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    background: #f8f9fa;
+    padding: 10px 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.marquee-content {
+    display: inline-block;
+    animation: marqueeScroll 15s linear infinite;
+}
+
+@keyframes marqueeScroll {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+/* Style the search field */
+
+form.example input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid grey;
+    float: left;
+    width: 80%;
+    background: #f1f1f1;
+}
+
+
+/* Style the submit button */
+
+form.example button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #2196F3;
+    color: white;
+    font-size: 17px;
+    border: 1px solid grey;
+    border-left: none;
+    /* Prevent double borders */
+    cursor: pointer;
+}
+
+form.example button:hover {
+    background: #0b7dda;
+}
+
+
+/* Clear floats */
+
+form.example::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.btn-light i {
+    font-size: 1.2rem;
+    /* Make the search icon bigger */
+    color: #333;
+    /* Dark color for contrast */
+}
