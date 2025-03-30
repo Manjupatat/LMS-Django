@@ -16,27 +16,27 @@ This project is a **feature-rich Learning Management System (LMS)** built with *
 LMS-Django/ 
 │ 
 └── lms_project/  
-   |              
-   ├── courses/                # Course-related functionality  
-   |
-   ├── customer/               # Customer-related functionality 
-   |
-   ├── home/                   # Homepage and general pages 
-   |
-   ├── lms_project/            # Main Django project folder
-   |
-   ├── media/                  # Uploaded course images & files 
-   |
-   ├── static/                 # Static files (CSS, JavaScript, Images)
-   | 
-   ├── templates/              # HTML Templates 
-   |
-   ├── user/                   # User authentication and profiles app 
-   |
-   ├── db.sqlite3              # SQLite database 
-   ├── manage.py               # Django management script 
-   ├── README.md               # Project documentation 
-   └── requirements.txt        # Dependencies
+      │ 
+      └─── courses/                # Course-related functionality  
+      |
+      ├── customer/               # Customer-related functionality 
+      |
+      ├── home/                   # Homepage and general pages 
+      |
+      ├── lms_project/            # Main Django project folder
+      |
+      ├── media/                  # Uploaded course images & files 
+      |
+      ├── static/                 # Static files (CSS, JavaScript, Images)
+      | 
+      ├── templates/              # HTML Templates 
+      |
+      ├── user/                   # User authentication and profiles app 
+      |
+      ├── db.sqlite3              # SQLite database 
+      ├── manage.py               # Django management script 
+      ├── README.md               # Project documentation 
+      └── requirements.txt        # Dependencies
 ```
 
 
