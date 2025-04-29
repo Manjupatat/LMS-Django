@@ -8,3 +8,4 @@ requests
 pyjwt
 cryptography
 reportlab
+crispy_bootstrap5
