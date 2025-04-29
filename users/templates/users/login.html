@@ -38,6 +38,14 @@
                         <p>Don't have an account? <a href="{% url 'register' %}" class="text-primary">Sign up</a></p>
                     </div>
 
+                      <h3 class="row justify-content-center"> OR </h3>
+                        
+                    
+                        <button type="submit" class="btn btn-primary w-100" onclick="location.href='{% provider_login_url 'google' %}'">
+                            <i class="fa-brads fa-google googleicon"></i>
+                            Continue with Google</button> 
+                               
+
                   
                 </div>
             </div>
