@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load socialaccount %}
 {% block title %}Login - LMS{% endblock %}
 {% block content %}
 <!--
@@ -41,9 +42,13 @@
                       <h3 class="row justify-content-center"> OR </h3>
                         
                     
-                        <button type="submit" class="btn btn-primary w-100" onclick="location.href='{% provider_login_url 'google' %}'">
+                        <button type="submit" class="btn btn-primary w-100">
                             <i class="fa-brads fa-google googleicon"></i>
-                            Continue with Google</button> 
+<!--                             Continue with Google --> 
+                             <a href="{% provider_login_url 'google' %}" class="btn btn-danger">Login with Google</a>
+                        </button> 
+                    
+ 
                                
 
                   
