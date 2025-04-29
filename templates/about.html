@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}About us | LMS{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container text-center">
+        <h2>About Me</h2>
+        <img src="{% static 'photo.png' %}" alt="Your Photo" class="rounded-circle my-3">
+        <p>Hello! I'm a passionate software developer with a focus on building efficient and user-friendly web applications.  
+        This Learning Management System (LMS) is a project aimed at making online learning seamless and engaging.</p>
+    
+        <h3>Why This LMS?</h3>
+        <p>As someone who loves technology and education, I wanted to create a platform that allows students and educators to connect easily.  
+        With features like course management, quizzes, and progress tracking, this LMS enhances the learning experience.</p>
+    
+        <h3>Technologies Used</h3>
+        <ul class="list-group">
+            <li class="list-group-item">Django (Python)</li>
+            <li class="list-group-item">HTML, CSS, Bootstrap</li>
+            <li class="list-group-item">PostgreSQL/SQLite</li>
+            <li class="list-group-item">JavaScript (optional for interactivity)</li>
+        </ul>
+    
+        <h3>Connect With Me</h3>
+        <p>Feel free to reach out for collaboration or feedback!</p>
+        <a href="https://github.com/manjupatat" target="_blank" class="btn btn-dark">GitHub</a>
+        <a href="mailto:your.email@example.com" class="btn btn-primary">Email</a>
+        <a href="https://www.linkedin.com/in/manjupatat" target="_blank" class="btn btn-dark">Linkedin</a>
+    </div>
+    {% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses | LMS{% endblock %}
+
+{% block content %}
+   <!-- <h1>User Profile</h1>
+    <p>Welcome, {{ user.username }}!</p>
+    <p>Email: {{ user.email }}</p> -->
+
+    <div>
+        <div class="row justify-content-center">
+            <div>
+                <div>
+                    <div class="bg-primary text-white text-center">
+                        <h3>My Profile</h3>
+                    </div>
+                    <div class="text-center">
+                       <!-- <img src="{{ user.profile.image.url }}" alt="Profile Picture" class="rounded-circle mb-3" width="120" height="120">-->
+                        <h4>{{ user.username }}</h4>
+                        <p class="text-muted">{{ user.email }}</p>
+
+                        <div>
+                            <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">
+                                <i class="fa-solid fa-edit"></i> Edit Profile
+                            </a>
+                            <!--<a href="{% url 'change_password' %}" class="btn btn-outline-danger">
+                                <i class="fa-solid fa-lock"></i> Change Password
+                            </a>-->
+                        </div><hr>
+
+                    </div>
+                    <div>
+                        <h2>My Courses</h2>
+                        <div class="row">
+                        {% if enrolled_courses %}<div>
+                             {% for course in enrolled_courses %}
+                           <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ course.title }}</h5>
+
+                                    <p class="card-text">{{ course.description|truncatechars:100 }}</p>
+                                    <p class="card-text">
+                                    <small class="text-muted">Enrolled on: {{ enrolled_on|date:"M d, Y" }}</small>
+                                    </p>
+                                    <a href="{% url 'course_detail' course.id %}" class="btn btn-primary">Continue</a>
+                                 </div>
+                            </div>
+                        </div>
+                            {% endfor %}
+                            </div>
+                        {% else %}
+                             <div class="col-12">
+                                <p>You have not enrolled in any courses yet.</p>
+                            </div>
+                        {% endif %}
+                            </div>
+                    </div>
+                    <div>
+                        <h3>Course Progress</h3>
+                        {% for item in progress_data %}
+                          <div class="mb-3">
+                              <h5>{{ item.course.title }}</h5>
+                              <div class="progress">
+                                  <div class="progress-bar" role="progressbar">
+                                      {{ item.progress }}%
+                                  </div>
+                              </div>
+                          </div>
+                        {% endfor %}
+                    </div>
+
+                    <div>
+                        <h3 class="mt-4">Your Activity</h3>
+                        <div class="calendar-grid">
+                            {% for day in activity_days %}
+                                <div class="day {% if day.active %}active{% endif %}" title="{{ day.date }}"></div>
+                            {% endfor %}<br>
+                        </div>
+                                            </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'logout' %}" class="btn btn-secondary">
+                            <i class="fa-solid fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% endblock %}

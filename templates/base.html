@@ -1,0 +1,186 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LMS{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- FontAwesome (for icons) -->
+<script src="https://kit.fontawesome.com/YOUR-KIT-CODE.js" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap CSS -->
+   <!-- Bootstrap 5.3+ JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="{% static  'css/style.css' %}">
+   <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.enroll-btn');
+    const alertBox = document.getElementById('enroll-alert');
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Animate the button
+            btn.disabled = true;
+            btn.innerText = 'Enrolled ✔️';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-secondary');
+            btn.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+            }, 200);
+
+            // Show top alert message
+            alertBox.classList.remove('d-none');
+            alertBox.classList.add('show');
+
+            // Optional: Auto-hide after a few seconds
+            setTimeout(() => {
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alertBox);
+                bsAlert.close();
+            }, 5000);
+
+            // Optional: Handle backend logic (AJAX/form submit) here
+        });
+    });
+});
+</script>
+</head>
+<body>
+<div id="enroll-alert" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+    🎉 You have successfully enrolled in the course!
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">e-learning</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'courses' %}">Courses</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+                <div class="dropdown ms-auto">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="themeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Theme
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+                    <li><button class="dropdown-item" data-theme="light">🌞 Light</button></li>
+                    <li><button class="dropdown-item" data-theme="dark">🌙 Dark</button></li>
+                    <li><button class="dropdown-item" data-theme="system">💻 System</button></li>
+                  </ul>
+                </div>
+            </div>
+        </div>
+
+
+</nav>
+
+
+    <script>
+    const setTheme = (theme) => {
+        if (theme === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        localStorage.setItem('theme', theme);
+    };
+
+    // Set initial theme
+    const savedTheme = localStorage.getItem('theme') || 'system';
+    setTheme(savedTheme);
+
+    // Theme switcher
+    document.querySelectorAll('[data-theme]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const selectedTheme = btn.getAttribute('data-theme');
+            setTheme(selectedTheme);
+        });
+    });
+</script>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+
+
+<link rel="stylesheet" href="{% static 'css/themes.css' %}">
+
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <div class="row">
+                <!-- Quick Links -->
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-light text-decoration-none">Home</a></li>
+                        <li><a href="{% url 'courses' %}" class="text-light text-decoration-none">Courses</a></li>
+                        <li><a href="{% url 'about' %}" class="text-light text-decoration-none">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" class="text-light text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Social Media -->
+                <div class="col-md-4">
+                    <h5>Follow Us</h5>
+                  <!--  <a href="#" class="text-light mx-2"><i class="fab fa-facebook fa-2x"></i></a>
+                    <a href="#" class="text-light mx-2"><i class="fab fa-twitter fa-2x"></i></a>
+                    <a href="#" class="text-light mx-2"><i class="fab fa-instagram fa-2x"></i></a>
+                    <a href="#" class="text-light mx-2"><i class="fab fa-linkedin fa-2x"></i></a> -->
+
+                    <a href="https://www.linkedin.com/in/manjupatat" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-linkedin fa-2x">Linkedin</i>
+                    </a>
+                    <a href="https://github.com/Manjupatat" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-github fa-2x">Github</i>
+                    </a>
+
+                    <a href="https://twitter.com/your-profile" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-twitter fa-2x"></i>
+                    </a>
+                    <a href="https://instagram.com/your-profile" target="_blank" class="text-light mx-2">
+                        <i class="fab fa-instagram fa-2x"></i>
+                    </a>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <p>Email: manjupatat80@gail.com </p>
+                    <p>Phone: +91 - 8971812177</p>
+                    <p>Address: Mysore, Karnataka, India</p>
+                </div>
+            </div>
+
+            <hr class="bg-light">
+
+            <!-- Copyright -->
+            <p class="text-center">&copy; 2025 LMS. All Rights Reserved.</p>
+            <p class="text-center">This Website is designed and developed by <a href="https://github.com/Manjupatat" class="text-light mx-2">Manju</a></p>
+        </div>
+    </footer>
+
+    <!-- FontAwesome for Social Media Icons -->
+<!--    <script src="https://kit.fontawesome.com/YOUR-KIT-CODE.js" crossorigin="anonymous"></script>-->
+<!--    -->
+
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>-->
+</body>
+</html>

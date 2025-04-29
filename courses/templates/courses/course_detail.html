@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ course.name }} - LMS{% endblock %}
+{% block content %}
+<!--<a href="{% url 'courses' %}" class="btn btn-secondary">Back to Courses</a>-->
+<h2>{{ course.name }}</h2>
+<p>{{ course.description }}</p>
+<!-- Enroll Button or Enrolled Badge -->
+{% if enrolled %}
+    <span class="badge bg-success">Enrolled</span>
+{% else %}
+    <form method="POST" action="{% url 'enroll_course' course.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Enroll Now</button>
+    </form>
+{% endif %}
+
+<hr>
+<h2>Syllabus</h2>
+<!--<ul>-->
+<!--  {% for lesson in lessons %}-->
+<!--    <li>{{ lesson.title }}</li>-->
+<!--  {% empty %}-->
+<!--    <li>No lessons available for this course.</li>-->
+<!--  {% endfor %}-->
+<!--</ul>-->
+
+<div class="container">
+    <h1>{{ course.title }}</h1>
+    <h2>{{ current_lesson.title }}</h2>
+
+    <div class="lesson-content">
+      <p>{{ current_lesson.content }}</p>
+      {% if current_lesson.video_url %}
+
+        <div style="margin:auto;height:350px;width:600px;">
+          <iframe width="600" height="350"
+            src="{{ current_lesson.video_url }}"
+            frameborder="0"
+            style="border-radius:4px;"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+          </iframe>
+        </div>
+      {% else %}
+        <p>No video available for this lesson.</p>
+      {% endif %}
+    </div><br>
+
+    <div class="navigation d-flex justify-content-between mt-4">
+        {% if prev_lesson %}
+        <a href="{% url 'course_detail_lesson' course.id prev_lesson.id %}" class="btn btn-primary">Previous Lesson</a>
+        {% else %}
+        <div></div>
+         {% endif %}
+
+      {% if next_lesson %}
+        <a href="{% url 'course_detail_lesson' course.id next_lesson.id %}" class="btn btn-primary">Next Lesson</a>
+        {% else %}
+        <div></div>
+        {% endif %}
+    </div>
+  </div>
+
+{% endblock %}
+
+
+

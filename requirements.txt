@@ -1,0 +1,10 @@
+django
+dotenv
+djangorestframework
+djangorestframework-simplejwt
+django-allauth
+django-crispy-forms
+requests
+pyjwt
+cryptography
+reportlab
