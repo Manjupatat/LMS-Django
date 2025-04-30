@@ -15,6 +15,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
 from courses.models import *
+from djnago.views import *
 # from courses.models import Enrollment
 
 
@@ -33,9 +34,13 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, "users/register.html", {"form": form})
 
-def logout_view(request):
-    logout(request)
-    return redirect('home')
+# def logout_view(request):
+#     logout(request)
+#     return redirect('home')
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')
 
 def about(request):
     return render(request, 'about.html')
