@@ -15,7 +15,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
 from courses.models import *
-from djnago.views import *
+from django.views import *
 # from courses.models import Enrollment
 
 
