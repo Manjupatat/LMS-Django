@@ -9,7 +9,7 @@ from .views import register_view, about, edit_profile, profile_view
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
-from users.views import LogoutView
+# from users.views import LogoutView
 
 urlpatterns = [
     
@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('register/', register_view, name='register'),
     path('login/', LoginView.as_view(template_name='users/login.html'), name='login'),
-    path('logout/', LogoutView.as_view(template_name='home.html'), name='logout'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path("contact/", TemplateView.as_view(template_name="contact.html"), name="contact"),
     path('profile/', profile_view,name='profile'),
