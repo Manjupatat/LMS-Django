@@ -30,10 +30,17 @@ SECRET_KEY = 'django-insecure-&0v7ho0#qz!uxl%09t1ryz9b9+5r8@wsl8bksfn+=mm$io*rx!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
+
 CSRF_TRUSTED_ORIGINS = [
     "https://lms-django-c6gn.onrender.com"
 ]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # Application definition
 
