@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Profile
 from django.contrib.auth.models import User
-
 class RegisterForm(UserCreationForm):
     # is_instructor = forms.BooleanField(required=False)
 
@@ -12,13 +11,14 @@ class RegisterForm(UserCreationForm):
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
+        model = Profile
+        fields = ['profile_photo','first_name','last_name','linkedin','github']
+   
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
         model = CustomUser
-        fields = ['username','email','first_name','last_name']
-   
-   
-   
-   
-   
+        fields = ['username', 'email']
+
 # class ProfileUpdateForm(forms.ModelForm):
 #     first_name = forms.CharField(max_length=30, required=True)
 #     last_name = forms.CharField(max_length=30, required=True)

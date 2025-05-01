@@ -3,7 +3,7 @@
 # Create your views here.
 
 from django.shortcuts import render, get_object_or_404,redirect
-from .models import Course,Discussion,UserProgress,Lesson
+from .models import Course,Discussion,UserProgress,Lesson,Quiz
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from django.core.mail import send_mail
@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 def course_list(request):
     courses = Course.objects.all()
-    return render(request, 'courses/courses.html', {'courses': courses})
+    return render(request, 'courses/courses.html', {'courses': courses,})
 
 def course_detail(request, course_id, lesson_id=None):  # Ensure this function exists
     course = get_object_or_404(Course, id=course_id)
@@ -22,9 +22,16 @@ def course_detail(request, course_id, lesson_id=None):  # Ensure this function e
     enrolled = False
     if request.user.is_authenticated:
         enrolled = UserProgress.objects.filter(user=request.user, course=course).exists()
-    current_lesson = get_object_or_404(Lesson, id=lesson_id) if lesson_id else lessons.first()
+    current_lesson = get_object_or_404(Lesson, id=lesson_id, course=course) if lesson_id else lessons.first()
     prev_lesson = lessons.filter(id__lt=current_lesson.id).last()
     next_lesson = lessons.filter(id__gt=current_lesson.id).first()
+    progress, _ = UserProgress.objects.get_or_create(user=request.user, course=course)
+    completed_count = progress.completed_lessons.count()
+    total_count = lessons.count()
+    if total_count > 0:
+        progress_percent = int((completed_count / total_count) * 100)
+    else:
+        progress_percent = 0
     return render(request, "courses/course_detail.html", {
         "course": course,
         'lessons':lessons,
@@ -32,7 +39,53 @@ def course_detail(request, course_id, lesson_id=None):  # Ensure this function e
         'current_lesson':current_lesson,
         "next_lesson":next_lesson,
     'prev_lesson':prev_lesson,
+        'user_progress': progress,
+        'progress_percent': progress_percent,
     })
+
+def profile_view(request):
+    user = request.user
+    enrolled_courses = Course.objects.filter(enrollment__user=user)  # Adjust if using custom Enrollment model
+    progress_data = []
+
+    for course in enrolled_courses:
+        lessons = course.lessons.all()
+        quizzes = Quiz.objects.filter(course=course)
+        progress, created = UserProgress.objects.get_or_create(user=user, course=course)
+
+        total_items = lessons.count() + quizzes.count()
+        completed_items = progress.completed_lessons.count() + progress.completed_quizzes.count()
+
+        if total_items > 0:
+            percent = int((completed_items / total_items) * 100)
+        else:
+            percent = 0
+
+        progress_data.append({
+            'course': course,
+            'progress': percent
+        })
+
+    return render(request, 'users/profile.html', {
+        'enrolled_courses': enrolled_courses,
+        'progress_data': progress_data,
+    })
+
+
+@login_required
+def complete_lesson(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    progress, created = UserProgress.objects.get_or_create(user=request.user, course=lesson.course)
+    progress.completed_lessons.add(lesson)
+    return redirect('course_detail', lesson.course.id)
+@login_required
+def mark_lesson_complete(request, lesson_id):
+    lesson = get_object_or_404(Lesson, id=lesson_id)
+    course = lesson.course
+    progress, created = UserProgress.objects.get_or_create(user=request.user, course=course)
+    if request.method == "POST":
+        progress.completed_lessons.add(lesson)
+        return redirect('course_detail', course.id)
 
 def course_discussion(request, course_id):
     course = get_object_or_404(Course, id=course_id)

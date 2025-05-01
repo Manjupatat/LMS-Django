@@ -27,10 +27,11 @@
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4 d-flex"> <!-- Adjust column size here -->
                 <div class="card p-3 flex-fill d-flex flex-column"> <!-- Removed duplicate 'card' class -->
                     {% if course.image %}
-                <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ course.image.url }}" class="card-img-top img-thumbnail mx-auto" alt="{{ course.title }}" style="height: 200px;width:280px; ">
             {% else %}
-              <img src="{% static 'default_course_image.jpg' %}" class="card-img-top" alt="Default Course Image" style="height: 200px; object-fit: cover;">
+              <img src="{% static 'default_course_image.jpg' %}" class="card-img-top" alt="Default Course Image" style="height: 80px;width:120px;">
             {% endif %}
+
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ course.title }}</h5>
                         <p class="card-text flex-grow-1">{{ course.description }}</p>

@@ -1,10 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Courses | LMS{% endblock %}
+
+{% block content %}
+
+
 <div class="dropdown">
     <a class="nav-link dropdown-toggle" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-        <img src="{{ user.profile.image.url }}" class="rounded-circle" alt="Profile" width="40" height="40">
+<!--        <img src="{{ user.profile.image.url }}" class="rounded-circle" alt="Profile" width="40" height="40">-->
+<!--        <div class="text-center">-->
+                            {% if user.profile.profile_photo %}
+                          <img src="{{ user.profile.profile_photo.url }}" alt="Profile Picture"
+                               class="rounded-circle mb-3 img-thumbnail mx-auto d-block"
+                               style="width: 80px; height: 80px;">
+                             {% else %}
+                            <img src="{% static 'default.png' %}" alt="Default Profile Picture" class="rounded-circle mb-3 img-thumbnail mx-auto d-block"
+                               style="width: 80px; height: 80px;">
+                        {% endif %}
+<!--                        </div>-->
     </a>
     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="profileDropdown">
         <li class="text-center">
-            <img src="{{ user.profile.image.url }}" class="rounded-circle mt-2" width="70" height="70" alt="User Image">
+<!--            <img src="{{ user.profile.image.url }}" class="rounded-circle mt-2" width="70" height="70" alt="User Image">-->
+            <div class="text-center">
+                            {% if user.profile.profile_photo %}
+                          <img src="{{ user.profile.profile_photo.url }}" alt="Profile Picture"
+                               class="rounded-circle mb-3 img-thumbnail mx-auto d-block"
+                               style="width: 80px; height: 80px;">
+                             {% else %}
+                            <img src="{% static 'default.png' %}" alt="Default Profile Picture" class="rounded-circle mb-3 img-thumbnail mx-auto d-block"
+                               style="width: 80px; height: 80px;">
+                        {% endif %}
+                        </div>
             <p class="fw-bold mb-0">{{ user.get_full_name }}</p>
             <p class="text-muted small">{{ user.email }}</p>
         </li>
@@ -19,3 +46,4 @@
         <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Log out</a></li>
     </ul>
 </div>
+{% endblock %}

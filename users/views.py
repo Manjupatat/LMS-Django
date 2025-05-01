@@ -10,7 +10,9 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
-from .forms import RegisterForm,UserCreationForm,ProfileUpdateForm
+# from .forms import RegisterForm,UserCreationForm,ProfileUpdateForm
+from .models import *
+from .forms import *
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
@@ -48,27 +50,36 @@ def about(request):
 
 # @login_required
 def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=profile)
+        # form=ProfileUpdateForm(request.POST, request.FILES,instance=profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            # form.save()
             return redirect('profile')
     else:
-        form = ProfileUpdateForm(instance=request.user)
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form=ProfileUpdateForm(instance=profile)
 
-    return render(request, 'users/edit_profile.html', {'form': form})
+    return render(request, 'users/edit_profile.html', {'user_form':user_form, "profile_form":profile_form,})
 
 @login_required
 def profile_view(request):
     user=request.user
     user_progress = UserProgress.objects.filter(user=user)
     enrolled_courses = [progress.course for progress in user_progress]
-
+    profile, _ = Profile.objects.get_or_create(user=user)
     # enrolled_courses=User
     return render(request, 'users/profile.html',{'enrolled_courses': enrolled_courses,
-        'user': user,})
+        'user': user,
+        'profile':profile,
+        })
 
-
+def dropdown_view(request):
+    return render(request,'users/profile_dropdown.html')
 @login_required
 def my_courses(request):
     user = request.user

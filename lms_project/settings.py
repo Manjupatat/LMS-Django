@@ -30,9 +30,9 @@ SECRET_KEY = 'django-insecure-&0v7ho0#qz!uxl%09t1ryz9b9+5r8@wsl8bksfn+=mm$io*rx!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
-
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
+#
 CSRF_TRUSTED_ORIGINS = [
     "https://lms-django-c6gn.onrender.com"
 ]
@@ -89,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'courses.context_processors.popular_courses',
             ],
         },
     },

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Courses | LMS{% endblock %}
 
 {% block content %}
@@ -14,11 +14,43 @@
                     <div class="bg-primary text-white text-center">
                         <h3>My Profile</h3>
                     </div>
-                    <div class="text-center">
-                       <!-- <img src="{{ user.profile.image.url }}" alt="Profile Picture" class="rounded-circle mb-3" width="120" height="120">-->
+                    <div class="text-center row">
+                        <div class="text-center">
+                            {% if user.profile.profile_photo %}
+                          <img src="{{ user.profile.profile_photo.url }}" alt="Profile Picture"
+                               class="rounded-circle mb-3 img-thumbnail mx-auto d-block"
+                               style="width: 80px; height: 80px;">
+                             {% else %}
+                            <img src="{% static 'default.png' %}" alt="Default Profile Picture" class="rounded-circle mb-3 img-thumbnail mx-auto d-block"
+                               style="width: 80px; height: 80px;">
+                        {% endif %}
+                        </div>
+
                         <h4>{{ user.username }}</h4>
                         <p class="text-muted">{{ user.email }}</p>
+                            <div>
+                                {% if user.profile.linked %}
+                                  <a href="{{ user.profile.linkedin }}"><i class="fab fa-facebook"></i></a>
+                                {% endif %}
+                            </div>
+                            <div class="container">
+                                {% if profile.linkedin %}
 
+                                    <a href="{{ profile.linkedin }}" target="_blank">
+                                      <i class="fab fa-linkedin"></i>
+                                    </a>
+
+                                {% endif %}
+                                <div class="container">
+                                </div>
+                                {% if profile.github %}
+
+                                <a href="{{ profile.github }}" target="_blank">
+                                  <i class="fab fa-github"></i>
+                                </a>
+
+                            {% endif %}
+                        </div>
                         <div>
                             <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary">
                                 <i class="fa-solid fa-edit"></i> Edit Profile
@@ -57,17 +89,24 @@
                             </div>
                     </div>
                     <div>
-                        <h3>Course Progress</h3>
-                        {% for item in progress_data %}
-                          <div class="mb-3">
-                              <h5>{{ item.course.title }}</h5>
-                              <div class="progress">
-                                  <div class="progress-bar" role="progressbar">
-                                      {{ item.progress }}%
-                                  </div>
-                              </div>
-                          </div>
-                        {% endfor %}
+                       <h3>Course Progress</h3>
+{% if progress_data %}
+  {% for item in progress_data %}
+    <div class="mb-3">
+      <h5>{{ item.course.title }}</h5>
+      <div class="progress" style="height: 20px;">
+        <div class="progress-bar bg-success" role="progressbar"
+             style="width: {{ item.progress }}%;"
+             aria-valuenow="{{ item.progress }}" aria-valuemin="0" aria-valuemax="100">
+          {{ item.progress }}%
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No progress data available.</p>
+{% endif %}
+
                     </div>
 
                     <div>
@@ -77,10 +116,10 @@
                                 <div class="day {% if day.active %}active{% endif %}" title="{{ day.date }}"></div>
                             {% endfor %}<br>
                         </div>
-                                            </div>
+                    </div>
                     <div class="card-footer text-center">
-                        <a href="{% url 'logout' %}" class="btn btn-secondary">
-                            <i class="fa-solid fa-sign-out-alt"></i> Logout
+                        <a href="{% url 'drop_down' %}" class="btn btn-secondary">
+                            <i class="fa-solid fa-sign-out-alt"></i> Dropdown
                         </a>
                     </div>
                 </div>
