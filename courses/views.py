@@ -3,19 +3,19 @@
 # Create your views here.
 
 from django.shortcuts import render, get_object_or_404,redirect
-from .models import Course,Discussion,UserProgress,Lesson,Quiz
+from .models import Course,Discussion,UserProgress,Lesson,Quiz,Question,QuizResult
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from django.core.mail import send_mail
-from .forms import ContactForm
+from .forms import ContactForm,QuizForm,QuestionForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+import json
 
 def course_list(request):
     courses = Course.objects.all()
     return render(request, 'courses/courses.html', {'courses': courses,})
-
+@login_required
 def course_detail(request, course_id, lesson_id=None):  # Ensure this function exists
     course = get_object_or_404(Course, id=course_id)
     lessons=course.lessons.all()
@@ -25,6 +25,8 @@ def course_detail(request, course_id, lesson_id=None):  # Ensure this function e
     current_lesson = get_object_or_404(Lesson, id=lesson_id, course=course) if lesson_id else lessons.first()
     prev_lesson = lessons.filter(id__lt=current_lesson.id).last()
     next_lesson = lessons.filter(id__gt=current_lesson.id).first()
+    # progress=None
+    # if request.user.is_authenticated:
     progress, _ = UserProgress.objects.get_or_create(user=request.user, course=course)
     completed_count = progress.completed_lessons.count()
     total_count = lessons.count()
@@ -105,6 +107,45 @@ def generate_certificate(request, course_id):
     p.save()
 
     return response
+@login_required
+def take_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    # questions = quiz.questions.all()
+    questions=Question.objects.filter(quiz=quiz)
+    # Deserialize options field from string to list
+    for question in questions:
+        question.options = json.loads(question.options)
+    score=None
+    total=questions.count()
+    user_answers={}
+    if request.method == 'POST':
+        score = 0
+        for question in questions:
+            selected = request.POST.get(f'question_{question.id}')
+            user_answers[question.id]=selected
+            if selected == question.correct_answer:
+                score += 1
+    return render(request, 'courses/take_quiz.html', {
+        'quiz': quiz,'questions': questions,'score':score,'total':total,'user_answers':user_answers,})
+
+def create_quiz(request):
+    if request.method == 'POST':
+        quiz_form = QuizForm(request.POST)
+        if quiz_form.is_valid():
+            quiz = quiz_form.save()
+            return redirect('add_questions', quiz_id=quiz.id)
+    else:
+        quiz_form = QuizForm()
+    return render(request, 'courses/create_quiz.html', {'form': quiz_form})
+
+def add_questions(request, quiz_id):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = QuestionForm(initial={'quiz': quiz_id})
+    return render(request, 'courses/add_question.html', {'form': form})
 
 @login_required
 def enroll_course(request, course_id):

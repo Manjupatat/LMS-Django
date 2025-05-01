@@ -16,6 +16,9 @@ urlpatterns = [
     path('course/<int:course_id>/enroll/', views.enroll_course, name='enroll_course'),  # <-- Add this
     path('course/<int:course_id>/discussion/', views.course_discussion, name='course_discussion'),
     path('lesson/<int:lesson_id>/complete/', views.mark_lesson_complete, name='mark_lesson_complete'),
+    path('quiz/<int:quiz_id>/',views.take_quiz,name='take_quiz'),
+    path('create-quiz/', views.create_quiz, name='create_quiz'),
+    path('add-question/<int:quiz_id>/', views.add_questions, name='add_questions'),
 ]
 if settings.DEBUG:
     urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

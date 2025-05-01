@@ -7,7 +7,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.timezone import now
-
+import json
+from django.core.exceptions import ValidationError
 class Course(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -38,7 +39,30 @@ class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     question_text = models.TextField()
     correct_answer = models.CharField(max_length=255)
-    options = models.JSONField()
+    options = models.TextField()
+
+    # def clean(self):
+    #     try:
+    #         options = json.loads(self.options)
+    #         if not isinstance(options, list):
+    #             raise ValidationError("Options must be a list.")
+    #         if self.correct_answer not in options:
+    #             raise ValidationError("Correct answer must be one of the options.")
+    #     except json.JSONDecodeError:
+    #         raise ValidationError("Options must be valid JSON.")
+
+    def clean(self):
+        if isinstance(self.options, list):
+            # Convert list to JSON string before saving
+            self.options = json.dumps(self.options)
+        try:
+            opts = json.loads(self.options)
+            if not isinstance(opts, list):
+                raise ValidationError("Options must be a list.")
+            if self.correct_answer not in opts:
+                raise ValidationError("Correct answer must be one of the options.")
+        except json.JSONDecodeError:
+            raise ValidationError("Options must be valid JSON.")
 
 class QuizResult(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

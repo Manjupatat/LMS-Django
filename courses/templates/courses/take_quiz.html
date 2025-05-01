@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ quiz.title }}</h2>
+<!--  <div>-->
+<!--  {% if score is not None %}-->
+<!--    <h3>Your Score: {{ score }} / {{ total }}</h3>-->
+<!--{% endif %}-->
+<!--</div>-->
+<form method="post">
+    {% csrf_token %}
+    <ul>
+        {% for question in questions %}
+            <li>
+                <strong>{{ question.question_text }}</strong><br>
+                {% for option in question.options %}
+                    <label>
+                        <input type="radio" name="question_{{ question.id }}" value="{{ option }}">
+                        {{ option }}
+                    </label><br>
+                {% endfor %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <button type="submit">Submit</button>
+</form>
+
+{% if score is None %}
+    <h3>Your Score: 0 / {{ total }}</h3>
+  {% else %}
+  <h3>Your Score: {{ score }} / {{ total }}</h3>
+{% endif %}
+</div>
+
+
+{% endblock %}

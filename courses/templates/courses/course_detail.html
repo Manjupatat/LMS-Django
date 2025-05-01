@@ -48,6 +48,16 @@
           {% for lesson in course.lessons.all %}
           <div class="list-group-item">
             <h6 class="mb-1">{{ lesson.title }}</h6>
+              <div class="mt-3">
+        <p>{{ current_lesson.content }}</p>
+            {% for quiz in course.quiz_set.all %}
+        <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-sm btn-outline-info mt-2">
+          <i class="fa-solid fa-clipboard-question"></i> Take Quiz
+        </a>
+           {% endfor %}
+
+      </div>
+
             {% if lesson in user_progress.completed_lessons.all %}
               <span class="badge bg-success">Completed</span>
             {% elif lesson.id == current_lesson.id %}
@@ -75,6 +85,12 @@
       </div>
       <div class="mt-3">
         <p>{{ current_lesson.content }}</p>
+            {% for quiz in course.quiz_set.all %}
+        <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-sm btn-outline-info mt-2">
+          <i class="fa-solid fa-clipboard-question"></i> Take Quiz
+        </a>
+           {% endfor %}
+
       </div>
 
           <div class="navigation d-flex justify-content-between mt-4">
@@ -93,6 +109,7 @@
 </div>
   </div>
 </div>
+
 
 
 {% endblock %}
