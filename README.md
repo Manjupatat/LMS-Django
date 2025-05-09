@@ -94,5 +94,6 @@ For any queries or suggestions, reach out to:
 📧 **Email**: manjupatat80@gmail.com
 
 🐙 **GitHub**: [Manjunath L Patat](https://github.com/Manjupatat)
+🐙 **LinkedIn**: [Manjunath L Patat](https://linkedin.in/manjupatat)
 
 # 🚀 Happy Learning! 🎓
