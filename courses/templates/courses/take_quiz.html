@@ -1,38 +1,56 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>{{ quiz.title }}</h2>
-<!--  <div>-->
-<!--  {% if score is not None %}-->
-<!--    <h3>Your Score: {{ score }} / {{ total }}</h3>-->
-<!--{% endif %}-->
-<!--</div>-->
-<form method="post">
-    {% csrf_token %}
-    <ul>
-        {% for question in questions %}
-            <li>
-                <strong>{{ question.question_text }}</strong><br>
-                {% for option in question.options %}
-                    <label>
-                        <input type="radio" name="question_{{ question.id }}" value="{{ option }}">
-                        {{ option }}
-                    </label><br>
-                {% endfor %}
-            </li>
-        {% endfor %}
-    </ul>
 
-    <button type="submit">Submit</button>
-</form>
 
-{% if score is None %}
-    <h3>Your Score: 0 / {{ total }}</h3>
-  {% else %}
-  <h3>Your Score: {{ score }} / {{ total }}</h3>
-{% endif %}
+<div class="col-md-3" style="width:1300px;">
+      <div>
+        <div class="card-header bg-primary text-white">
+            <div class="text-center justify-content-center row">
+                <h2>{{ quiz.title }}</h2>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+                <!--    <div class="text-center">-->
+<!--                  <h2>{{ quiz.title }}</h2></div>-->
+                <!--  <div>-->
+                <!--  {% if score is not None %}-->
+                <!--    <h3>Your Score: {{ score }} / {{ total }}</h3>-->
+                <!--{% endif %}-->
+                <!--</div>-->
+
+            <form method="post">
+                {% csrf_token %}
+                <ol>
+                    {% for question in questions %}
+                        <li>
+                            <ol>
+                            <strong>{{ question.question_text }}</strong><br>
+                            {% for option in question.options %}
+                                <li>
+                                    <input type="radio" name="question_{{ question.id }}" value="{{ option }}">
+                                    {{ option }}
+                                </li><br>
+                            {% endfor %}
+                            </ol>
+                        </li>
+                    <hr>
+                    {% endfor %}
+                </ol>
+                <div class="text-center">
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+            <div class="container mt-3 text-center">
+                {% if score is None %}
+                    <h3>Your Score: 0 / {{ total }}</h3>
+                {% else %}
+                  <h3>Your Score: {{ score }} / {{ total }}</h3>
+                {% endif %}
+            </div>
+        </div>
+      </div>
 </div>
-
 
 {% endblock %}

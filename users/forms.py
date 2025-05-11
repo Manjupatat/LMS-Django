@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser, Profile
 from django.contrib.auth.models import User
 class RegisterForm(UserCreationForm):
-    # is_instructor = forms.BooleanField(required=False)
+    is_instructor = forms.BooleanField(required=False)
 
     class Meta:
         model = CustomUser

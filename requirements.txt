@@ -1,5 +1,5 @@
-django
-dotenv
+django~=5.2
+dotenv~=0.9.9
 djangorestframework
 djangorestframework-simplejwt
 django-allauth
@@ -7,5 +7,8 @@ django-crispy-forms
 requests
 pyjwt
 cryptography
-reportlab
+reportlab~=4.4.0
 crispy_bootstrap5
+
+xhtml2pdf~=0.2.17
+python-dotenv~=1.1.0

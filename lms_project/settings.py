@@ -33,9 +33,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
 #
-CSRF_TRUSTED_ORIGINS = [
-    "https://lms-django-c6gn.onrender.com"
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://lms-django-c6gn.onrender.com"
+# ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SECURE = True
@@ -153,7 +153,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 # Authentication Redirects
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = 'login'
 
 
@@ -165,7 +165,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 load_dotenv()
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -176,7 +176,7 @@ with open('secrets.json') as f:
 EMAIL_HOST_PASSWORD = secrets["EMAIL_HOST_PASSWORD"]
 
 
-SITE_ID = 1
+SITE_ID = 2
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -184,8 +184,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Redirect after login
-LOGIN_REDIRECT_URL = "/"
-
+# LOGIN_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 # Social authentication settings
 SOCIALACCOUNT_PROVIDERS = {
     "google": {

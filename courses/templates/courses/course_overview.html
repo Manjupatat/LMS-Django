@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }} – Overview{% endblock %}
+
+{% block content %}
+
+<!--<div class="container mt-4">-->
+<!--  <h2>Available Courses</h2>-->
+<!--  <div class="row">-->
+<!--    {% if courses %}-->
+<!--      {% for course in courses %}-->
+<!--        <div class="col-md-4 mb-4">-->
+<!--          <div class="card h-100">-->
+<!--            {% if course.image %}-->
+<!--              <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">-->
+<!--            {% endif %}-->
+<!--            <div class="card-body">-->
+<!--              <h5 class="card-title">{{ course.title }}</h5>-->
+<!--              <p class="card-text">{{ course.description|truncatechars:100 }}</p>-->
+<!--              <a href="{% url 'course_overview' course.id %}" class="btn btn-primary">View Course</a>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      {% endfor %}-->
+<!--    {% else %}-->
+<!--      <p>No courses available yet.</p>-->
+<!--    {% endif %}-->
+<!--  </div>-->
+<!--</div>-->
+
+<div class="container mt-5">
+  <div class="row">
+
+    <!-- Left panel: course image & info -->
+    <div class="col-md-4 text-center">
+      {% if course.image %}
+        <img src="{{ course.image.url }}" class="img-fluid rounded mb-4" alt="{{ course.title }}">
+      {% endif %}
+      <h2>{{ course.title }}</h2>
+      <p class="text-muted">By {{ course.instructor.get_full_name }}</p>
+      <h4 class="text-primary">${{ course.price }}</h4>
+      <a href="{% url 'course_detail_lesson' course.id lessons.first.id %}" class="btn btn-lg btn-success mt-3">
+        Start Course
+      </a>
+    </div>
+
+    <!-- Right panel: description & syllabus -->
+    <div class="col-md-8">
+      <h3>Description</h3>
+      <p>{{ course.description }}</p>
+
+      <h3 class="mt-4">Syllabus</h3>
+      <ul class="list-group">
+        {% for lesson in lessons %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ forloop.counter }}. {{ lesson.title }}
+            <span class="badge bg-secondary">{{ lesson.video_url|yesno:"Video,Read" }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No lessons available yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

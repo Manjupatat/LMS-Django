@@ -11,6 +11,13 @@
     <button type="submit" class="btn btn-primary">Login</button>
 </form> -->
 
+
+{% if form.errors %}
+  <div class="alert alert-danger">
+    {{ form.errors }}
+  </div>
+{% endif %}
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-4">

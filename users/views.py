@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import date, timedelta
 from courses.models import *
 from django.views import *
-# from courses.models import Enrollment
+from courses.models import Enrollment
 
 
 
@@ -28,12 +28,16 @@ from django.views import *
 def register_view(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
+
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            # user = CustomUser.objects.create_user(username=..., password=...)
+            user.is_active = True  # Important
+            user.save()
             # login(request, user)
             return redirect("login")
     else:
-        form = UserCreationForm()
+        form = RegisterForm()
     return render(request, "users/register.html", {"form": form})
 
 # def logout_view(request):
