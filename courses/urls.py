@@ -22,8 +22,8 @@ urlpatterns = [
     path('add-question/<int:quiz_id>/', views.add_questions, name='add_questions'),
     path('<int:course_id>/certificate/', views.certificate_view, name='get_certificate'),
     path('<int:course_id>/download-certificate/',download_certificate_pdf,name="download_certificate"),
-    path('<int:course_id>/download/',generate_certificate,name="certificate"),
-    path('<int:course_id>/image/',generate_certificate_image,name="image")
+    # path('<int:course_id>/download/',generate_certificate,name="certificate"),
+    path('<int:course_id>/certificate/',generate_certificate_image,name="image")
 
 ]
 if settings.DEBUG:
