@@ -33,9 +33,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 # ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
 #
-# CSRF_TRUSTED_ORIGINS = [
-#     "https://lms-django-c6gn.onrender.com"
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://lms-django-c6gn.onrender.com"
+]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_COOKIE_SECURE = True
