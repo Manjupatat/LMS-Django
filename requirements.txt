@@ -9,6 +9,6 @@ pyjwt
 cryptography
 reportlab~=4.4.0
 crispy_bootstrap5
-
+pillow
 xhtml2pdf~=0.2.17
 python-dotenv~=1.1.0
