@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-&0v7ho0#qz!uxl%09t1ryz9b9+5r8@wsl8bksfn+=mm$io*rx!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
+# ALLOWED_HOSTS = ['lms-django-c6gn.onrender.com']
 #
 CSRF_TRUSTED_ORIGINS = [
     "https://lms-django-c6gn.onrender.com"

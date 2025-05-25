@@ -4,7 +4,7 @@
 
 from django.shortcuts import render, get_object_or_404,redirect
 from .models import Course,Discussion,UserProgress,Lesson,Quiz,Question,QuizResult, Enrollment
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from reportlab.pdfgen import canvas
 from django.core.mail import send_mail
 from .forms import ContactForm,QuizForm,QuestionForm
@@ -13,8 +13,10 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.utils import timezone
 from xhtml2pdf import pisa
-from  django.template.loader import get_template
+from django.template.loader import get_template
 from reportlab.lib.pagesizes import A4,landscape
+from reportlab.lib import colors
+from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 import io,qrcode, os
@@ -47,6 +49,13 @@ def course_detail(request, course_id, lesson_id=None):  # Ensure this function e
         progress_percent = int((completed_count / total_count) * 100)
     else:
         progress_percent = 0
+    # quiz_for_lesson = None
+    # if current_lesson:
+    #     quiz_for_lesson = Quiz.objects.filter(course=course, title=current_lesson.title).first()
+    quiz = Quiz.objects.filter(lesson=current_lesson).first()
+    if request.GET.get("next") == "true" and quiz:
+        return redirect('take_quiz', quiz_id=quiz.id)
+
     return render(request, "courses/course_detail.html", {
         "course": course,
         'lessons':lessons,
@@ -56,6 +65,7 @@ def course_detail(request, course_id, lesson_id=None):  # Ensure this function e
     'prev_lesson':prev_lesson,
         'user_progress': progress,
         'progress_percent': progress_percent,
+        # 'quiz_for_lesson': quiz_for_lesson,
     })
 
 
@@ -192,30 +202,39 @@ def certificate_view(request, course_id):
     else:
         return redirect('course_detail',course_id=course_id)
 
-# @login_required
+@login_required
 # def download_certificate_pdf(request, course_id):
 #     course = get_object_or_404(Course, id=course_id)
 #     if request.user in course.students.all():
-#         # Create response
 #         response = HttpResponse(content_type='application/pdf')
 #         response['Content-Disposition'] = f'attachment; filename=certificate_{request.user.username}.pdf'
 #
-#         # Create canvas
-#         buffer=io.BytesIO()
-#         p = canvas.Canvas(buffer, pagesize=A4)
-#         width, height = A4
+#         buffer = io.BytesIO()
+#         page_size = landscape(A4)
+#         p = canvas.Canvas(buffer, pagesize=page_size)
+#         width, height = page_size
+#
+#         # === Background and Border ===
+#         margin = 40
+#         p.setStrokeColor(colors.HexColor("#004080"))
+#         p.setLineWidth(6)
+#         p.rect(margin, margin, width - 2 * margin, height - 2 * margin)
+#
+#         inner_margin = 50
+#         p.setStrokeColor(colors.lightgrey)
+#         p.setLineWidth(1)
+#         p.rect(inner_margin, inner_margin, width - 2 * inner_margin, height - 2 * inner_margin)
 #
 #         logo_path = os.path.join(settings.BASE_DIR, 'static/images/logo.png')
 #         if os.path.exists(logo_path):
 #             p.drawImage(logo_path, x=40, y=height - 120, width=100, height=60, mask='auto')
 #
-#         # Draw Certificate Content
 #         p.setFont("Helvetica-Bold", 26)
 #         p.drawCentredString(width / 2, height - 100, "Certificate of Completion")
 #
 #         p.setFont("Helvetica", 18)
 #         p.drawCentredString(width / 2, height - 180, "This certifies that")
-# #
+#
 #         p.setFont("Helvetica-Bold", 22)
 #         p.drawCentredString(width / 2, height - 220, request.user.get_full_name() or request.user.username)
 #
@@ -228,18 +247,6 @@ def certificate_view(request, course_id):
 #         p.setFont("Helvetica", 14)
 #         p.drawCentredString(width / 2, height - 350, f"Date: {timezone.now().strftime('%B %d, %Y')}")
 #
-#         # Add signature placeholder or logo if needed
-#         # p.drawImage("path_to_logo.png", x, y, width, height)
-#         # Generate QR code (linking to course detail page or any verification URL)
-#         # qr_url = request.build_absolute_uri(f"/courses/{course.id}/")
-#         # qr = qrcode.make(qr_url)
-#         # qr_io = io.BytesIO()
-#         # qr.save(qr_io, format='PNG')
-#         # qr_io.seek(0)
-#         # qr_image = ImageReader(qr_io)
-#         # p.drawImage(qr_image, x=width - 150, y=50, width=100, height=100)
-#
-#         # Finalize PDF
 #         p.showPage()
 #         p.save()
 #         pdf = buffer.getvalue()
@@ -247,69 +254,214 @@ def certificate_view(request, course_id):
 #         response.write(pdf)
 #         return response
 #
-#         # return response
+#     return redirect('course_detail', course_id=course_id)
+
+def download_certificate_pdf(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if request.user in course.students.all():
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename=certificate_{request.user.username}.pdf'
+
+        buffer = io.BytesIO()
+        page_size = landscape(A4)
+        p = canvas.Canvas(buffer, pagesize=page_size)
+        width, height = page_size
+
+        # === Background and Border ===
+        margin = 40
+        p.setStrokeColor(colors.HexColor("#004080"))
+        p.setLineWidth(6)
+        p.rect(margin, margin, width - 2*margin, height - 2*margin)
+
+        inner_margin = 50
+        p.setStrokeColor(colors.lightgrey)
+        p.setLineWidth(1)
+        p.rect(inner_margin, inner_margin, width - 2*inner_margin, height - 2*inner_margin)
+
+        # === Logo ===
+        # logo_path = os.path.join(settings.BASE_DIR, 'static/images/logo.png')
+        # if os.path.exists(logo_path):
+        #     logo_width = 120
+        #     logo_height = 60
+        #     logo_x = (width - logo_width) / 2
+        #     logo_y = height - 60 - 10
+        #     p.drawImage(logo_path, x=logo_x, y=logo_y, width=logo_width, height=logo_height, mask='auto')
+        #
+        #     content_start_y=logo_y-30
+
+        # else:
+        content_start_y=height-100
+
+        # === Title ===
+        p.setFillColor(colors.HexColor("#003366"))
+        p.setFont("Helvetica-Bold", 40)
+        p.drawCentredString(width / 2, content_start_y, "Certificate of Completion")
+
+        # === Subtitle ===
+        p.setFillColor(colors.black)
+        p.setFont("Helvetica-Oblique", 22)
+        p.drawCentredString(width / 2, content_start_y - 50, "This certificate is proudly presented to")
+
+        # === User Name ===
+        user_name = request.user.get_full_name() or request.user.username
+        p.setFont("Helvetica-Bold", 32)
+        p.setFillColor(colors.HexColor("#004080"))
+        p.drawCentredString(width / 2, content_start_y - 100, user_name)
+
+        # === Course info ===
+        p.setFont("Helvetica", 20)
+        p.drawCentredString(width / 2, content_start_y - 150, "for successfully completing the course")
+
+        p.setFont("Helvetica-BoldOblique", 26)
+        p.setFillColor(colors.darkblue)
+        p.drawCentredString(width / 2, content_start_y - 200, f"\"{course.title}\"")
+
+        # === Date ===
+        p.setFont("Helvetica-Oblique", 16)
+        p.setFillColor(colors.black)
+        p.drawCentredString(width / 2, content_start_y - 240, f"Issued on: {timezone.now().strftime('%B %d, %Y')}")
+
+        # === Signature placeholders ===
+        # p.setLineWidth(1)
+        # p.line(width / 4 - 60, height - 420, width / 4 + 60, height - 420)
+        # p.line(3 * width / 4 - 60, height - 420, 3 * width / 4 + 60, height - 420)
+
+        # p.setFont("Helvetica", 14)
+        # p.drawCentredString(width / 4, height - 440, "Instructor Signature")
+        # p.drawCentredString(3 * width / 4, height - 440, "Coordinator Signature")
+
+        # === Finalize ===
+        p.showPage()
+        p.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+
+    return redirect('course_detail', course_id=course_id)
+
+# def download_certificate_pdf(request, course_id):
+#     course = get_object_or_404(Course, id=course_id)
+#     if request.user in course.students.all():
+#         response = HttpResponse(content_type='application/pdf')
+#         response['Content-Disposition'] = f'attachment; filename=certificate_{request.user.username}.pdf'
+#
+#         buffer = io.BytesIO()
+#         p = canvas.Canvas(buffer, pagesize=landscape(A4))
+#         width, height = landscape(A4)
+#
+#         # Border
+#         p.setStrokeColor(colors.HexColor("#000080"))
+#         p.setLineWidth(4)
+#         p.rect(20, 20, width - 40, height - 40)
+#
+#         # Header logos
+#         left_logo = os.path.join(settings.BASE_DIR, 'static/images/left_logo.png')
+#         main_logo = os.path.join(settings.BASE_DIR, 'static/images/technologics_logo.png')
+#         seal_logo = os.path.join(settings.BASE_DIR, 'static/images/seal.png')
+#
+#         if os.path.exists(left_logo):
+#             p.drawImage(left_logo, 40, height - 130, width=80, height=80, mask='auto')
+#         if os.path.exists(main_logo):
+#             p.drawImage(main_logo, width/2 - 60, height - 120, width=120, height=60, mask='auto')
+#
+#         # Title
+#         p.setFont("Helvetica-Bold", 28)
+#         p.drawCentredString(width / 2, height - 160, "Internship Certificate")
+#
+#         # Subtitle
+#         p.setFont("Helvetica-Oblique", 14)
+#         p.drawCentredString(width / 2, height - 190, "This certificate is proudly presented to")
+#
+#         # Recipient name
+#         user_name = request.user.get_full_name() or request.user.username
+#         p.setFont("Helvetica-Bold", 24)
+#         p.drawCentredString(width / 2, height - 220, user_name)
+#
+#         # Body content
+#         p.setFont("Helvetica", 16)
+#         p.drawCentredString(width / 2, height - 260, f"for successful completion of Internship in")
+#         p.setFont("Helvetica-Bold", 18)
+#         p.drawCentredString(width / 2, height - 290, course.title)
+#
+#         p.setFont("Helvetica", 16)
+#         p.drawCentredString(width / 2, height - 320, "under the guidance of TECHNOLOGICS GLOBAL RESEARCH LAB")
+#         p.drawCentredString(width / 2, height - 350, f"Conducted between 03-02-2025 to 12-05-2025")
+#         p.drawCentredString(width / 2, height - 380, "for the student of NIE Institute of Technology, Mysore")
+#
+#         # Seal
+#         if os.path.exists(seal_logo):
+#             p.drawImage(seal_logo, width - 200, 50, width=120, height=120, mask='auto')
+#
+#         # Signature line
+#         p.line(width - 250, 70, width - 100, 70)
+#         p.setFont("Helvetica", 10)
+#         p.drawCentredString(width - 175, 55, "Signature of Authority")
+#
+#         # Footer
+#         p.setFont("Helvetica-Oblique", 8)
+#         p.drawCentredString(width / 2, 30, "Technologics Global, 10th Main Road, Jayanagar, Bengaluru - www.technologicsglobal.com")
+#
+#         p.showPage()
+#         p.save()
+#         pdf = buffer.getvalue()
+#         buffer.close()
+#         response.write(pdf)
+#         return response
 #
 #     return redirect('course_detail', course_id=course_id)
 
 
-@login_required
-def download_certificate_pdf(request, course_id):
-    course = Course.objects.get(id=course_id)
-    user = request.user
-    date = timezone.now().strftime('%d %B, %Y')
 
-    # Setup PDF
-    buffer = BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-    width, height = A4
+# @login_required
+# def download_certificate_pdf(request, course_id):
+#     course = Course.objects.get(id=course_id)
+#     user = request.user
+#     date = timezone.now().strftime('%d %B, %Y')
 #
-    # Background and border (optional)
-    p.setStrokeColorRGB(0.2, 0.5, 0.3)
-    p.setLineWidth(4)
-    p.rect(30, 30, width - 60, height - 60)
-
-    # Logo (top center)
-    logo_path = 'media/logo.png'  # Adjust path as needed
-    p.drawImage(logo_path, width/2 - 80, height - 120, width=160, preserveAspectRatio=True)
-
-    # Title
-    p.setFont("Helvetica-Bold", 26)
-    p.drawCentredString(width / 2, height - 160, "Certificate of Completion")
+#     # Setup PDF
+#     buffer = BytesIO()
+#     p = canvas.Canvas(buffer, pagesize=A5)
+#     width, height = A5
 #
-    # Recipient
-    p.setFont("Helvetica", 16)
-    p.drawCentredString(width / 2, height - 200, "This is to certify that")
-    p.setFont("Helvetica-Bold", 20)
-    p.drawCentredString(width / 2, height - 230, f"{user.get_full_name() or user.username}")
-
-    # Course Name
-    p.setFont("Helvetica", 16)
-    p.drawCentredString(width / 2, height - 270, "has successfully completed the course")
-    p.setFont("Helvetica-Bold", 18)
-    p.drawCentredString(width / 2, height - 300, f"{course.title}")
-
-    # Date
-    p.setFont("Helvetica", 14)
-    p.drawCentredString(width / 2, height - 340, f"Date: {date}")
-
-    # QR Code generation
-    # qr_data = f"https://yourdomain.com/courses/{course.id}/certificate/verify/{user.id}/"
-    # qr = qrcode.make(qr_data)
-    # qr_io = BytesIO()
-    # qr.save(qr_io)
-    # qr_io.seek(0)
-    # qr_image = ImageReader(qr_io)
-    # p.drawImage(qr_image, width - 130, 50, 80, 80)
-
-    # Footer or signature (optional)
-    p.setFont("Helvetica-Oblique", 12)
-    p.drawString(40, 40, "E-learning Platform - EduVerse")
-
-    p.showPage()
-    p.save()
-
-    buffer.seek(0)
-    return HttpResponse(buffer, content_type='application/pdf')
+#     # Background and border (optional)
+#     p.setStrokeColorRGB(0.2, 0.5, 0.3)
+#     p.setLineWidth(4)
+#     p.rect(30, 30, width - 60, height - 60)
+#
+#     # Logo (top center)
+#     logo_path = 'media/logo.png'  # Adjust path as needed
+#     p.drawImage(logo_path, width/2 - 80, height - 120, width=160, preserveAspectRatio=True)
+#
+#     # Title
+#     p.setFont("Helvetica-Bold", 26)
+#     p.drawCentredString(width / 2, height - 160, "Certificate of Completion")
+#
+#     # Recipient
+#     p.setFont("Helvetica", 16)
+#     p.drawCentredString(width / 2, height - 200, "This is to certify that")
+#     p.setFont("Helvetica-Bold", 20)
+#     p.drawCentredString(width / 2, height - 230, f"{user.get_full_name() or user.username}")
+#
+#     # Course Name
+#     p.setFont("Helvetica", 16)
+#     p.drawCentredString(width / 2, height - 270, "has successfully completed the course")
+#     p.setFont("Helvetica-Bold", 18)
+#     p.drawCentredString(width / 2, height - 300, f"{course.title}")
+#
+#     # Date
+#     p.setFont("Helvetica", 14)
+#     p.drawCentredString(width / 2, height - 340, f"Date: {date}")
+#
+#     # Footer or signature (optional)
+#     p.setFont("Helvetica-Oblique", 12)
+#     p.drawString(40, 40, "E-learning Platform - EduVerse")
+#
+#     p.showPage()
+#     p.save()
+#
+#     buffer.seek(0)
+#     return HttpResponse(buffer, content_type='application/pdf')
 
 @login_required
 def generate_certificate_image(request, course_id):
@@ -408,12 +560,16 @@ def generate_certificate_image(request, course_id):
 @login_required
 def take_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id)
+    course=quiz.course
     # questions = quiz.questions.all()
     questions=Question.objects.filter(quiz=quiz)
     # Deserialize options field from string to list
     for question in questions:
-        question.options = json.loads(question.options)
+        if isinstance(question.options, str):
+            question.options = json.loads(question.options)
     score=None
+    percent=0
+    passed=False
     total=questions.count()
     user_answers={}
     if request.method == 'POST':
@@ -423,8 +579,64 @@ def take_quiz(request, quiz_id):
             user_answers[question.id]=selected
             if selected == question.correct_answer:
                 score += 1
-    return render(request, 'courses/take_quiz.html', {
-        'quiz': quiz,'questions': questions,'score':score,'total':total,'user_answers':user_answers,})
+
+        total = questions.count()
+        percent = int((score / total) * 100) if total > 0 else 0
+        passed = percent >= 80
+
+        return render(request, 'courses/take_quiz.html', {
+                'quiz': quiz,
+            'questions': questions,
+            'score':score,
+            'total':total,
+            'user_answers':user_answers,
+            'passed':passed,
+            'percent':percent,
+            'course_id':quiz.course.id,
+        'cpurse':course,})
+    # return redirect('course_detail_lesson', course_id=quiz.course.id, lesson_id=quiz.lesson.id + 1)
+
+@login_required
+def assessment_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    quiz = Quiz.objects.filter(course=course).first()  # assumes one quiz per course
+    questions=Question.objects.filter(quiz=quiz)
+    score = None
+    percent = 0
+    passed = False
+    total = questions.count()
+    user_answers = {}
+    if request.method == "POST":
+        correct = 0
+        for q in questions:
+            if isinstance(q.options, str):
+                q.options=json.loads(q.options)
+            selected = request.POST.get(f"question_{q.id}")
+            user_answers[q.id] = selected
+            if selected == q.correct_answer:
+                correct += 1
+
+        score = correct
+        percent = int((score / total) * 100)
+        passed = percent >= 80
+
+        # Save result
+        QuizResult.objects.create(user=request.user, quiz=quiz, score=score)
+
+    return render(request, "courses/assessment.html", {
+        "course": course,
+        "quiz": quiz,
+        "questions": questions,
+        "user_answers": user_answers,
+        "score": score,
+        "percent": percent,
+        "passed": passed
+    })
+    # if not quiz:
+    #     messages.warning(request, "No quiz available for this course.")
+    #     return redirect('course_detail', course_id=course.id)
+    #
+    # return redirect('take_quiz', quiz_id=quiz.id)
 
 def create_quiz(request):
     if request.method == 'POST':

@@ -55,7 +55,9 @@ class Lesson(models.Model):
 
 class Quiz(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255)
+
 
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Assessment - {{ course.title }}{% endblock %}
+{% block content %}
+<h2>{{ quiz.title }}</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <ol>
+    {% for question in questions %}
+      <li><ol type="1">
+        <strong>{{ question.question_text }}</strong>
+
+          {% for option in question.options %}
+            <li>
+                <input type="radio" name="question_{{ question.id }}" value="{{ option }}">
+                {{ option }}
+
+            </li>
+          {% endfor %}
+        </ol>
+      </li>
+    {% endfor %}
+  </ol>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+{% if score is not None %}
+  <div class="mt-4 alert {% if passed %}alert-success{% else %}alert-danger{% endif %}">
+    You scored {{ score }} out of {{ questions|length }} ({{ percent }}%)
+  </div>
+
+  {% if passed %}
+    <a href="{% url 'get_certificate' course.id %}" class="btn btn-success">🎉 Get Certificate</a>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

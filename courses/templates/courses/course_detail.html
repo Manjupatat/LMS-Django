@@ -121,15 +121,16 @@
                                 {% endif %}
 
                                 </div>
+
                             {% endfor %}
-                            <div>
-                                {% if progress_percent == 100 %}
-                                <div class="text-center mt-4">
-                                    <a href="{% url 'image' course.id %}" class="btn btn-success">
-                                        🎉 Get Certificate
-                                    </a>
-                                </div>
+                            {% if progress_percent == 100 %}
+                              <div class="text-center mt-4">
+                                <a href="{% url 'download_certificate' course.id %}" class="btn btn-success">
+                                  🎓 Get Certificate
+                                </a>
+                              </div>
                             {% endif %}
+
 
                             </div>
             </div>
@@ -149,14 +150,14 @@
                                         frameborder="0">
                                 </iframe>
                               </div>
-                              <div class="mt-3">
-                                <p>{{ current_lesson.content }}</p>
-                                    {% for quiz in course.quiz_set.all %}
-                                <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-sm btn-outline-info mt-2">
-                                 Take Quiz <i class="fa-solid fa-clipboard"></i>
-                                </a>
-                                   {% endfor %}
-                              </div>
+<!--                              <div class="mt-3">-->
+<!--                                <p>{{ current_lesson.content }}</p>-->
+<!--                                    {% for quiz in course.quiz_set.all %}-->
+<!--                                <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-sm btn-outline-info mt-2">-->
+<!--                                 Take Quiz <i class="fa-solid fa-clipboard"></i>-->
+<!--                                </a>-->
+<!--                                   {% endfor %}-->
+<!--                              </div>-->
 
                               <div class="navigation d-flex justify-content-between mt-4">
                                     {% if prev_lesson %}
